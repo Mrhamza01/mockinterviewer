@@ -6,16 +6,13 @@ import Webcam from 'react-webcam';
 import { useParams } from 'next/navigation';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
+import Link from 'next/link';
 const GetinterviewsDetail = gql`
   query GetinterviewsDetail($interviewid: String!) {
     getinterviewsDetail(interviewid: $interviewid) {
-      id
-      jsonResponse
       jobPosition
       jobDescription
       jobExperience
-      createdBy
-      createdDate
     }
   }
 `;
@@ -82,18 +79,21 @@ export default function page() {
             <WebcamIcon className="h-48 w-48 p-10 bg-secondary rounded-lg border" />
           )}
           <Button
-          variant="ghost"
+            variant="ghost"
             className="mt-2"
             onClick={() => setWebcamEnabled(!webcamenabled)}
           >
             Enable /disable Cam and Mic
           </Button>
           <div>
-          <Button className="mt-2 bg-blue-600 hover:bg-blue-400 active:bg-blue-600">Start interview</Button>
+            <Link href={`/dashboard/interview/${paramsinterviewid}/start`}>
+              <Button className="mt-2 bg-blue-600 hover:bg-blue-400 active:bg-blue-600">
+                Start interview
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
-      
     </div>
   );
 }
