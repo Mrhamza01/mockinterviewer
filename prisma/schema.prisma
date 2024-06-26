@@ -15,10 +15,10 @@ datasource db {
 
 model mockinterviewer {
   id        String   @id @default(uuid())
-  jsonResponse   Json
+  jsonResponse   String
   jobPosition    String
   jobDescription String
-  jobExperience  String
+  jobExperience  Int
   createdBy      String
   createdDate    DateTime
 }

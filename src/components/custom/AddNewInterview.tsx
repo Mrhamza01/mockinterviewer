@@ -15,8 +15,37 @@ import { Textarea } from '../ui/textarea';
 import { chatSession } from '@/lib/ai/geminiConfig';
 import { LoaderIcon } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
-import { db } from '@/lib/db/dbconnection';
-import { mockinterviwer } from '@/lib/db/schema/schema';
+import { gql } from '@apollo/client';
+import { Toaster } from "@/components/ui/toaster"
+import { useToast } from "@/components/ui/use-toast"
+
+import client from '@/lib/graphql/client';
+
+const ADD_INTERVIEW_MUTATION = gql`
+  mutation AddInterview(
+    $jobPosition: String!
+    $jobDescription: String!
+    $jobExperience: Int!
+    $createdBy: String!
+    $jsonResponse: String!
+  ) {
+    addinterview(
+      jobPosition: $jobPosition
+      jobDescription: $jobDescription
+      jobExperience: $jobExperience
+      createdBy: $createdBy
+      jsonResponse: $jsonResponse
+    ) {
+      id
+      jobPosition
+      jobDescription
+      jobExperience
+      createdBy
+      jsonResponse
+      createdDate
+    }
+  }
+`;
 
 interface FormDataType {
   jobPosition: string;
@@ -34,6 +63,7 @@ const AddNewInterview = () => {
   });
   const [loading, setLoading] = useState(false);
   const [jsonResponse, setJsonResponse] = useState<any[]>([]);
+  const { toast } = useToast()
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -46,11 +76,12 @@ const AddNewInterview = () => {
     setLoading(true);
     console.log(formData);
     const inputPrompt = `
-job position: ${formData.jobPosition}, job description: ${formData.jobDescription}, year of experience: ${formData.yearsOfExperience}, 
-1 depend on this information please give me the 10 interview questions
-2 from the 10 questions 2 questions will be about introduction, projects or experience 
-3 provide the questions and answers in json format
-4 don't add any other text except question and answer`;
+job position: ${formData.jobPosition}, job description: ${formData.jobDescription}, years of experience: ${formData.yearsOfExperience}
+1. Based on this information, please generate 10 interview questions and provide answers for each question.
+2. Out of the 10 questions, ensure that 2 questions focus on introduction, projects, or experience.
+3. Provide the questions and answers in JSON format.
+4. Only include the questions and answers, without any additional text.
+`;
 
     try {
       const result = await chatSession.sendMessage(inputPrompt);
@@ -62,16 +93,25 @@ job position: ${formData.jobPosition}, job description: ${formData.jobDescriptio
       const parsedResponse = JSON.parse(jsonResponse);
       setJsonResponse(parsedResponse);
 
-    const dbresponse=   await db.insert(mockinterviwer).values({
-        jsonResponse: responseText as string,
-        jobDescription: formData.jobDescription as string,
-        jobPosition: formData.jobPosition as string,
-        jobExperience: formData.yearsOfExperience.toString(), // Convert number to string
-        createdBy: user?.primaryEmailAddress?.emailAddress as string,
-        createdAt: moment().format("DD-MM-YYYY") as string,
-      }).returning({mockid:mockinterviwer.id});
-
-      console.log("DB SUCCESSFUL" ,dbresponse);
+      // Call the mutation to save the interview
+      const response=await client.mutate({
+        mutation: ADD_INTERVIEW_MUTATION,
+        variables: {
+          jobPosition: formData.jobPosition,
+          jobDescription: formData.jobDescription,
+          jobExperience: Number(formData.yearsOfExperience),
+          createdBy: String(user?.primaryEmailAddress?.emailAddress),
+          jsonResponse: jsonResponse,
+        },
+      });
+      if(response){
+        setIsOpen(false);
+        toast({
+          variant: "default",
+          title: "success",
+          description: "interview genrated successfully",
+        })
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -81,6 +121,8 @@ job position: ${formData.jobPosition}, job description: ${formData.jobDescriptio
 
   return (
     <div>
+              <Toaster />
+
       <div
         className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-md cursor-pointer transition-all "
         onClick={() => setIsOpen(true)}
@@ -137,7 +179,7 @@ job position: ${formData.jobPosition}, job description: ${formData.jobDescriptio
                       min={0}
                       required
                       name="yearsOfExperience"
-                      value={formData.yearsOfExperience}
+                      value={formData.yearsOfExperience.toString()} // Convert to string
                       onChange={handleChange}
                     />
                   </div>
@@ -156,7 +198,8 @@ job position: ${formData.jobPosition}, job description: ${formData.jobDescriptio
                         className="bg-gray-700 text-white"
                         disabled={loading}
                       >
-                        <LoaderIcon className="animate-spin mr-1" /> Generating...
+                        <LoaderIcon className="animate-spin mr-1" />{' '}
+                        Generating...
                       </Button>
                     </div>
                   ) : (
