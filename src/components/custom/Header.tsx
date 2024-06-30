@@ -1,62 +1,68 @@
 "use client"
-import Image from "next/image";
 import { UserButton } from "@clerk/nextjs";
-import { usePathname,useRouter } from 'next/navigation'
-import Link from "next/link";
+import Link from "next/link"
+import { useState } from "react";
 
 const Header = () => {
-    const pathname = usePathname()
-    const router = useRouter()
-  // Define the primary color (you can set this dynamically)
-  const primaryColor = "#FF5733"; // Example color
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   return (
-    <div className="flex justify-between bg-secondary shadow-sm items-center">
-      <Image src="/logo.svg" alt="logo" width={30} height={50} />
-      <ul className="hidden md:flex md:gap-6 ">
-        <Link href="/dashboard">
-        <li
-          className={`hover:text-primary hover:font-bold transition-all cursor-pointer ${
-            pathname === "/dashboard" ? "text-blue-700 font-bold  border border-blue-700 rounded p-0.5" : ""
-          }`}
+    <div className="px-4 py-5 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
+      <div className="relative flex items-center justify-between">
+        <Link
+          href="/dashboard"
+          aria-label="Company"
+          title="Company"
+          className="inline-flex items-center"
         >
-          Dashboard
-        </li>
+          <svg
+            className="w-8 text-deep-purple-accent-400"
+            viewBox="0 0 24 24"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeMiterlimit="10"
+            stroke="currentColor"
+            fill="none"
+          >
+            <rect x="3" y="1" width="7" height="12" />
+            <rect x="3" y="17" width="7" height="6" />
+            <rect x="14" y="1" width="7" height="6" />
+            <rect x="14" y="11" width="7" height="12" />
+          </svg>
+          <span className="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">
+            Mock interview
+          </span>
         </Link>
-        <Link href="/questions">
-
-        <li
-          className={`hover:text-primary hover:font-bold transition-all cursor-pointer ${
-            pathname === "/questions" ? "text-blue-700 font-bold  border border-blue-700 rounded p-0.5" : ""
-          }`}
-        >
-          Questions
-        </li>
-        </Link>
-        <Link href="/upgrade">
-
-        <li
-          className={`hover:text-primary hover:font-bold transition-all cursor-pointer ${
-            pathname === "/upgrade" ? "text-blue-700 font-bold  border border-blue-700 rounded p-0.5": ""
-          }`}
-        >
-          Upgrade
-        </li>
-        </Link>
-        <Link href="/how-it-works">
-        <li
-          className={`hover:text-primary hover:font-bold transition-all cursor-pointer ${
-            pathname === "/how-it-works" ? "text-blue-700 font-bold  border border-blue-700 rounded p-0.5" : ""
-          }`}
-        >
-          How it Works
-        </li>
-        </Link>
-
-      </ul>
-      <UserButton />
+        <ul className="flex items-center  space-x-8 lg:flex">
+          <li>
+            <Link
+              href="/dashboard"
+              aria-label="Our product"
+              title="Our product"
+              className="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+            >
+              Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/upgrade"
+              aria-label="Our product"
+              title="Our product"
+              className="font-medium tracking-wide text-gray-700 transition-colors duration-200 hover:text-deep-purple-accent-400"
+            >
+              upgrade
+            </Link>
+          </li>
+        
+          <UserButton/>
+        </ul>
+        
+       
+      </div>
     </div>
   );
-};
+}
 
-export default Header;
+export default Header
+

@@ -1,6 +1,6 @@
 'use client';
 import { useState, ChangeEvent } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import moment from 'moment';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -54,6 +53,7 @@ interface FormDataType {
 }
 
 const AddNewInterview = () => {
+  const router=useRouter()
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState<FormDataType>({
@@ -111,6 +111,7 @@ job position: ${formData.jobPosition}, job description: ${formData.jobDescriptio
           title: "success",
           description: "interview genrated successfully",
         })
+        router.push(`/dashboard/interview/${response.data?.addinterview.id}`)
       }
     } catch (error) {
       console.log(error);

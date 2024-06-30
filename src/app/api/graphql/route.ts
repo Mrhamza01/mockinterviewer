@@ -16,6 +16,27 @@ const resolvers = {
       });
       return result;
     },
+    getUserAnswers: async (_: unknown, args: { mockinterviewerid: string }) => {
+      const { mockinterviewerid } = args;
+
+      const result = await prisma.useranswer.findMany({
+        where: { mockinterviewerid },
+      });
+      return result;
+    },
+    getEachUserInterviewsData: async (_: unknown, args: { createdBy: string }) => {
+      const { createdBy } = args;
+    
+      const result = await prisma.mockinterviewer.findMany({
+        where: { createdBy: createdBy },
+        orderBy: {
+          createdDate: 'desc',
+        },
+      });
+  
+      return result;
+    },
+    
   },
   Mutation: {
     addinterview: async (
@@ -89,6 +110,9 @@ const typeDefs = gql`
   type Query {
     hello: String
     getinterviewsDetail(interviewid: String!): mockinterviewer!
+    getEachUserInterviewsData(createdBy: String!): [mockinterviewer]!
+
+    getUserAnswers(mockinterviewerid: String!): [useranswer!]!
   }
 
   type Mutation {

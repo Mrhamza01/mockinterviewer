@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/client';
 import Questions from '@/components/custom/Questions';
 import Answer from '@/components/custom/Answer';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 const GetinterviewsDetail = gql`
   query GetinterviewsDetail($interviewid: String!) {
     getinterviewsDetail(interviewid: $interviewid) {
@@ -52,7 +53,7 @@ const Page = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 min-h-screen">
         {/* Questions */}
         <Questions
           data={questions}
@@ -65,25 +66,11 @@ const Page = () => {
           data={questions}
           activeQuestionIndex={activeQuestionIndex}
           interviewID={String(interviewid)}
+          setActiveQuestionIndex={setActiveQuestionIndex}
         />
+      
       </div>
-      <div className="flex justify-end gap-6">
-        {activeQuestionIndex > 0 && <Button  onClick={() => {
-              setActiveQuestionIndex(activeQuestionIndex-1);
-            }}>Previous Quesstion</Button>}
-        {activeQuestionIndex < questions?.length - 1 && (
-          <Button
-            onClick={() => {
-              setActiveQuestionIndex(activeQuestionIndex+1);
-            }}
-          >
-            Next Qusetion
-          </Button>
-        )}
-        {activeQuestionIndex === questions?.length - 1 && (
-          <Button >End Interview</Button>
-        )}
-      </div>
+      
     </div>
   );
 };

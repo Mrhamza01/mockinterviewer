@@ -1,12 +1,14 @@
-"use client"
+'use client';
 import type { Metadata } from 'next';
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from '@/components/ui/sonner';
 
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ApolloProvider } from '@apollo/client';
 import client from '@/lib/graphql/client';
 import { ClerkProvider } from '@clerk/nextjs';
+import Header from '@/components/custom/Header';
+import { Footer } from '@/components/custom/Fotter';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,10 +27,13 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <ApolloProvider client={client}>
-          <Toaster richColors expand={true} position="top-right" />
-          {children}</ApolloProvider>
-        </body>
+            <Toaster richColors expand={true} position="top-right" />
+            <Header />
 
+            {children}
+            <Footer />
+          </ApolloProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

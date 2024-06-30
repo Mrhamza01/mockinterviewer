@@ -23,7 +23,7 @@ const videoConstraints = {
   facingMode: 'user',
 };
 
-export default function page() {
+export default function Page() {
   const params = useParams();
   const paramsinterviewid = params.interviewid;
   const [webcamenabled, setWebcamEnabled] = useState(false);
@@ -32,10 +32,10 @@ export default function page() {
   });
 
   return (
-    <div className="flex flex-col my-10 justify-center items-center">
-      <h2 className="font-bold text-2xl ">Lets get started</h2>
+    <div className="flex flex-col mt-2 items-center min-h-screen">
+      <h2 className="font-bold text-2xl mb-5 ">Lets get started</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div className="flex flex-col my-5 gap-5 ">
+        <div className="flex flex-col gap-5 ">
           <div className="flex flex-col gap-5 p-5 border rounded-lg shadow-xl">
             <h2 className="text-lg">
               <strong>Job Role/position :</strong>

@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { chatSession } from '@/lib/ai/geminiConfig';
 import { useMutation, gql } from '@apollo/client';
 import { useUser } from '@clerk/nextjs';
+import Link from 'next/link';
 
 const ADD_USER_ANSWER = gql`
   mutation AddUserAnswer(
@@ -46,9 +47,10 @@ type AnswerProps = {
   data: any; // Replace 'any' with the actual type of the 'data' prop
   activeQuestionIndex: number;
   interviewID: string;
+  setActiveQuestionIndex: (index: number) => void;
 };
 
-const Answer: React.FC<AnswerProps> = ({ data, activeQuestionIndex, interviewID }) => {
+const Answer: React.FC<AnswerProps> = ({ data, activeQuestionIndex, interviewID,setActiveQuestionIndex }) => {
   const [answer, setAnswer] = useState('');
   const [cameraEnabled, setCameraEnabled] = useState(false);
   const [jsonResponse, setJsonResponse] = useState<any>(null); // Define jsonResponse as any or a specific type
@@ -135,7 +137,7 @@ const Answer: React.FC<AnswerProps> = ({ data, activeQuestionIndex, interviewID 
   };
 
   return (
-    <div className="flex items-center justify-center flex-col min-h-screen p-5 bg-gray-100">
+    <div>
       <div className="flex flex-col justify-center items-center bg-white shadow-lg rounded-lg p-5 mt-20 w-full max-w-md">
         <CameraOff size={64} className="text-gray-500 mb-5" />
         {cameraEnabled && (
@@ -168,7 +170,26 @@ const Answer: React.FC<AnswerProps> = ({ data, activeQuestionIndex, interviewID 
           {isRecording ? 'Stop Recording' : 'Record Answer'}
         </Button>
       </div>
-      
+      <div className="flex justify-end gap-6">
+        {activeQuestionIndex > 0 && <Button  onClick={() => {
+              setActiveQuestionIndex(activeQuestionIndex-1);
+            }}>Previous Quesstion</Button>}
+        {activeQuestionIndex < data?.length - 1 && (
+          <Button
+            onClick={() => {
+              setActiveQuestionIndex(activeQuestionIndex+1);
+            }}
+          >
+            Next Qusetion
+          </Button>
+        )}
+        {activeQuestionIndex === data?.length - 1 && (
+          <Link href={`/dashboard/interview/${interviewID}/feedback`}>
+
+          <Button >End Interview</Button>
+          </Link>
+        )}
+      </div>
       {error && <div className="text-red-500 mt-2">{error}</div>}
       {isRecording && <div className="text-blue-500 mt-2">Listening...</div>}
     </div>
