@@ -1,13 +1,11 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import Questions from '@/components/custom/Questions';
 import Answer from '@/components/custom/Answer';
-
-
+import { Button } from '@/components/ui/button';
 const GetinterviewsDetail = gql`
   query GetinterviewsDetail($interviewid: String!) {
     getinterviewsDetail(interviewid: $interviewid) {
@@ -22,19 +20,14 @@ const GetinterviewsDetail = gql`
   }
 `;
 
-const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: 'user',
-};
+const Page = () => {
+  const { interviewid } = useParams();
 
-export default function Page() {
-  const params = useParams();
-  const paramsinterviewid = params.interviewid;
-  const [jsonResponse, setJsonResponse] = useState<any[]>([]);
+  const [questions, setQuestions] = useState([]);
+  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
 
   const { data, loading, error } = useQuery(GetinterviewsDetail, {
-    variables: { interviewid: paramsinterviewid },
+    variables: { interviewid },
   });
 
   useEffect(() => {
@@ -47,7 +40,7 @@ export default function Page() {
         const parsedResponse = JSON.parse(
           data.getinterviewsDetail.jsonResponse
         );
-        setJsonResponse(parsedResponse.questions);
+        setQuestions(parsedResponse);
       } catch (e) {
         console.error('Failed to parse JSON response:', e);
       }
@@ -56,14 +49,43 @@ export default function Page() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  console.log(jsonResponse);
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-      {/* quessions */}
-      <Questions data={jsonResponse} />
 
-      {/* vide /audio recording */}
-      <Answer />
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* Questions */}
+        <Questions
+          data={questions}
+          activeQuestionIndex={activeQuestionIndex}
+          setActiveQuestion={setActiveQuestionIndex}
+        />
+
+        {/* Answer */}
+        <Answer
+          data={questions}
+          activeQuestionIndex={activeQuestionIndex}
+          interviewID={String(interviewid)}
+        />
+      </div>
+      <div className="flex justify-end gap-6">
+        {activeQuestionIndex > 0 && <Button  onClick={() => {
+              setActiveQuestionIndex(activeQuestionIndex-1);
+            }}>Previous Quesstion</Button>}
+        {activeQuestionIndex < questions?.length - 1 && (
+          <Button
+            onClick={() => {
+              setActiveQuestionIndex(activeQuestionIndex+1);
+            }}
+          >
+            Next Qusetion
+          </Button>
+        )}
+        {activeQuestionIndex === questions?.length - 1 && (
+          <Button >End Interview</Button>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default Page;

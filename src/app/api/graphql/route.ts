@@ -11,7 +11,7 @@ const resolvers = {
     getinterviewsDetail: async (_: unknown, args: { interviewid: string }) => {
       const { interviewid } = args;
 
-      const result = prisma.mockinterviewer.findFirst({
+      const result = await prisma.mockinterviewer.findFirst({
         where: { id: interviewid },
       });
       return result;
@@ -47,6 +47,41 @@ const resolvers = {
       });
       return interview;
     },
+    addUserAnswer: async (
+      _: unknown,
+      args: {
+        mockinterviewerid: string;
+        question: string;
+        correctAnswer: string;
+        userAnswer: string;
+        feedback: string;
+        rating: string;
+        useremail: string;
+      }
+    ) => {
+      const {
+        mockinterviewerid,
+        question,
+        correctAnswer,
+        userAnswer,
+        feedback,
+        rating,
+        useremail,
+      } = args;
+      const userAnswerEntry = await prisma.useranswer.create({
+        data: {
+          mockinterviewerid,
+          question,
+          correctAnswer,
+          userAnswer,
+          feedback,
+          rating,
+          useremail,
+          createdDate: new Date(),
+        },
+      });
+      return userAnswerEntry;
+    },
   },
 };
 
@@ -64,6 +99,15 @@ const typeDefs = gql`
       createdBy: String!
       jsonResponse: String!
     ): mockinterviewer
+    addUserAnswer(
+      mockinterviewerid: String!
+      question: String!
+      correctAnswer: String!
+      userAnswer: String!
+      feedback: String!
+      rating: String!
+      useremail: String!
+    ): useranswer
   }
 
   type mockinterviewer {
@@ -73,6 +117,18 @@ const typeDefs = gql`
     jobDescription: String!
     jobExperience: Int!
     createdBy: String!
+    createdDate: String!
+  }
+
+  type useranswer {
+    id: String!
+    mockinterviewerid: String!
+    question: String!
+    correctAnswer: String!
+    userAnswer: String!
+    feedback: String!
+    rating: String!
+    useremail: String!
     createdDate: String!
   }
 `;

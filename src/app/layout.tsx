@@ -1,5 +1,7 @@
 "use client"
 import type { Metadata } from 'next';
+import { Toaster } from "@/components/ui/sonner"
+
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ApolloProvider } from '@apollo/client';
@@ -22,8 +24,11 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <ApolloProvider client={client}>{children}</ApolloProvider>
+          <ApolloProvider client={client}>
+          <Toaster richColors expand={true} position="top-right" />
+          {children}</ApolloProvider>
         </body>
+
       </html>
     </ClerkProvider>
   );
