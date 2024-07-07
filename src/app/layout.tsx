@@ -1,7 +1,7 @@
 'use client';
 import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/sonner';
-
+import { Analytics } from "@vercel/analytics/react"
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ApolloProvider } from '@apollo/client';
@@ -9,7 +9,7 @@ import client from '@/lib/graphql/client';
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/custom/Header';
 import { Footer } from '@/components/custom/Fotter';
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ['latin'] });
 
 // export const metadata: Metadata = {
@@ -32,6 +32,9 @@ export default function RootLayout({
 
             {children}
             <Footer />
+            <Analytics />
+            <SpeedInsights />
+
           </ApolloProvider>
         </body>
       </html>

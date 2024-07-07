@@ -44,7 +44,7 @@ const Header = () => {
               Dashboard
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               href="/upgrade"
               aria-label="Our product"
@@ -54,7 +54,7 @@ const Header = () => {
               upgrade
             </Link>
           </li>
-        
+         */}
           <UserButton/>
         </ul>
         
